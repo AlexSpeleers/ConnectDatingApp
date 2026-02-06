@@ -21,7 +21,7 @@
       </a>
     </div>
     <nav class="flex gap-3 my-2 uppercase text-lg text-white">
-      @if (accountService.CurrentUser) {
+      @if (accountService.currentUser()) {
         <a
           routerLink="/members"
           routerLinkActive="text-accent"
@@ -48,6 +48,9 @@
         >Errors</a
       >
     </nav>
+    @if (busyService.busyRequestCount() > 0) {
+      <span class="loading loading-spinner text-accent"></span>
+    }
     <div class="flex align-middle ml-auto gap-3">
       <div class="dropdown mr-10 dropdown-end">
         <button
@@ -72,7 +75,7 @@
         </button>
         <ul
           tabindex="1"
-          class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-sm"
         >
           @for (theme of themes; track $index) {
             <li (click)="HandleSelectedTheme(theme)">
@@ -81,7 +84,7 @@
           }
         </ul>
       </div>
-      @if (accountService.CurrentUser; as user) {
+      @if (accountService.currentUser(); as user) {
         <div class="dropdown dropdown-end">
           <div
             tabindex="0"
@@ -95,7 +98,7 @@
             tabindex="-1"
             class="dropdown-content menu bg-base-100 rounded-box z-1 w-max p-2 shadow-sm"
           >
-            <li><a>Edit profile</a></li>
+            <li><a routerLink="/members/{{ user.id }}">Edit profile</a></li>
             <li><a (click)="Logout()">Logout</a></li>
           </ul>
         </div>

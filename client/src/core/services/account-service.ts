@@ -9,12 +9,8 @@ import { environment } from '../../environments/environment';
 })
 export class AccountService {
   private http: HttpClient = inject(HttpClient);
-  protected currentUser = signal<User | null>(null);
+  public currentUser = signal<User | null>(null);
   private baseUrl: string = environment.apiUrl;
-
-  public get CurrentUser(): User | null {
-    return this.currentUser();
-  }
 
   public GetUserFromStorage(): User | null {
     const userString = localStorage.getItem('user');
@@ -48,7 +44,7 @@ export class AccountService {
     );
   }
 
-  private SetCurrentUser(user: User) {
+  public SetCurrentUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
   }

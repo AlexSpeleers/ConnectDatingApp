@@ -1,7 +1,10 @@
-﻿using API.Entities;
+﻿using API.DTOs;
+using API.Entities;
+using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
@@ -26,5 +29,21 @@ public class MembersController(IMemberRepository memberRepository) : BaseApiCont
     public async Task<ActionResult<IReadOnlyList<Photo>>> GetPhotosForMember(string id)
     {
         return Ok(await memberRepository.GetPhotosForMemberAsync(id));
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    {
+        string? memberId = User.GetMemberId();
+        Member? member = await memberRepository.GetMemberForUpdate(memberId);
+        if (member is null) return BadRequest("Could not find member.");
+        member.DisplayName = memberUpdateDto.DisplayName ?? member.DisplayName;
+        member.Description = memberUpdateDto.Description ?? member.Description;
+        member.Country = memberUpdateDto.Country ?? member.Country;
+        member.City = memberUpdateDto.City ?? member.City;
+        member.User.DisplayName = memberUpdateDto.DisplayName ?? member.User.DisplayName;
+        memberRepository.Update(member);
+        if (!await memberRepository.SaveAllAsync()) return BadRequest("Failed to update member.");
+        return NoContent();
     }
 }
