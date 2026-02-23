@@ -22,5 +22,8 @@ public class MemberRepository(AppDbContext context) : IMemberRepository
 
     public void Update(Member member) => context.Entry(member).State = EntityState.Modified;
 
-    public async Task<Member?> GetMemberForUpdate(string id) => await context.Members.Include(x => x.User).SingleOrDefaultAsync(x => x.Id == id);
+    public async Task<Member?> GetMemberForUpdate(string id) => await context.Members
+        .Include(x => x.User)
+        .Include(x=>x.Photos)
+        .SingleOrDefaultAsync(x => x.Id == id);
 }
