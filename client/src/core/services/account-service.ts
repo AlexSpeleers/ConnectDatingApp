@@ -33,6 +33,7 @@ export class AccountService {
 
   public Logout() {
     localStorage.removeItem('user');
+    localStorage.removeItem('filters');
     this.currentUser.set(null);
   }
 
