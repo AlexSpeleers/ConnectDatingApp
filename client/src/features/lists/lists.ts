@@ -35,11 +35,13 @@ export class Lists implements OnInit {
       this.LoadLikes();
     }
   }
+
   protected LoadLikes() {
     this.likesService.GetLikes(this.predicate, this.pageNumber, this.pageSize).subscribe({
       next: (response) => this.paginatedResult.set(response),
     });
   }
+
   protected OnPageChange(event: { pageNumber: number; pageSize: number }) {
     this.pageSize = event.pageSize;
     this.pageNumber = event.pageNumber;

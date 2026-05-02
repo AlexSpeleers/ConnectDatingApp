@@ -14,39 +14,75 @@ export class AccountService {
   public currentUser = signal<User | null>(null);
   private baseUrl: string = environment.apiUrl;
 
-  public GetUserFromStorage() {
-    const userString = localStorage.getItem('user');
-    if (!userString) return;
-    const user: User = JSON.parse(userString);
-    this.currentUser.set(user);
+  public Register(creds: RegisterCreds) {
+    return this.http
+      .post<User>(this.baseUrl + 'account/register', creds, { withCredentials: true })
+      .pipe(
+        tap((user) => {
+          if (user) {
+            this.SetCurrentUser(user);
+            this.StartTokenRefreshInterval();
+          }
+        }),
+      );
   }
 
   public Login(creds: LoginCreds) {
-    return this.http.post<User>(this.baseUrl + 'account/login', creds).pipe(
-      tap((user) => {
-        if (user) this.SetCurrentUser(user);
-      }),
-    );
+    return this.http
+      .post<User>(this.baseUrl + 'account/login', creds, { withCredentials: true })
+      .pipe(
+        tap((user) => {
+          if (user) {
+            this.SetCurrentUser(user);
+            this.StartTokenRefreshInterval();
+          }
+        }),
+      );
   }
 
   public Logout() {
-    localStorage.removeItem('user');
     localStorage.removeItem('filters');
-    this.currentUser.set(null);
     this.likesService.ClearLikeIds();
+    this.currentUser.set(null);
   }
 
-  public Register(creds: RegisterCreds) {
-    return this.http.post<User>(this.baseUrl + 'account/register', creds).pipe(
-      tap((user) => {
-        if (user) this.SetCurrentUser(user);
-      }),
+  public RefreshToken() {
+    return this.http.post<User>(
+      this.baseUrl + 'account/refresh-token',
+      {},
+      { withCredentials: true },
+    );
+  }
+
+  StartTokenRefreshInterval() {
+    setInterval(
+      () => {
+        this.http
+          .post<User>(this.baseUrl + 'account/refresh-token', {}, { withCredentials: true })
+          .subscribe({
+            next: (user) => {
+              this.SetCurrentUser(user);
+            },
+            error: () => {
+              this.Logout();
+            },
+          });
+      },
+      5 * 60 * 1000,
     );
   }
 
   public SetCurrentUser(user: User) {
-    localStorage.setItem('user', JSON.stringify(user));
+    user.roles = this.getRolesFromToken(user);
     this.currentUser.set(user);
     this.likesService.GetLikeIds();
+  }
+
+  private getRolesFromToken(user: User): string[] {
+    console.log(user.token);
+    const payload = user.token.split('.')[1];
+    const decoded = atob(payload);
+    const jsonPayload = JSON.parse(decoded);
+    return Array.isArray(jsonPayload.role) ? jsonPayload.role : [jsonPayload.role];
   }
 }
