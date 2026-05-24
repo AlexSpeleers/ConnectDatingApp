@@ -482,3 +482,12 @@ $RECYCLE.BIN/
 *.swp
 API/appsettings.json
 API/dating.db*+
+
+# Claude Code
+.claude/
+.claude-cache/
+claude-debug.log
+
+# MCP / Claude local config
+.mcp/
+.mcp.json
