@@ -52,4 +52,23 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
     }
 
     public async Task<bool> SaveAllAsync() => await context.SaveChangesAsync() > 0;
+
+    public void AddGroup(Group group) => context.Groups.Add(group);
+
+    public async Task RemoveConnection(string connectionId) =>
+        await context.Connections
+            .Where(x => x.ConnectionId == connectionId)
+            .ExecuteDeleteAsync();
+
+    public async Task<Connection?> GetConnection(string connectionId) => await context.Connections.FindAsync(connectionId);
+
+    public async Task<Group?> GetMessageGroup(string groupName) =>
+        await context.Groups.Include(x => x.Connections)
+            .FirstOrDefaultAsync(x => x.Name == groupName);
+
+    public async Task<Group?> GetGroupForConnection(string connectionId) =>
+        await context.Groups.Include(x => x.Connections)
+            .Where(x => x.Connections
+            .Any(c => c.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
 }

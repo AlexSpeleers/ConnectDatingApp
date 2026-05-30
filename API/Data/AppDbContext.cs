@@ -13,6 +13,9 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
     public DbSet<Photo> Photos => Set<Photo>();
     public DbSet<MemberLike> Likes => Set<MemberLike>();
     public DbSet<Message> Messages => Set<Message>();
+    public DbSet<Group> Groups => Set<Group>();
+    public DbSet<Connection> Connections => Set<Connection>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
