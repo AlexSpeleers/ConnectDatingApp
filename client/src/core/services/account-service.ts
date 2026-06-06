@@ -43,10 +43,14 @@ export class AccountService {
   }
 
   public Logout() {
-    localStorage.removeItem('filters');
-    this.likesService.ClearLikeIds();
-    this.currentUser.set(null);
-    this.presenceService.StopConnection();
+    this.http.post(this.baseUrl + 'account/logout', {}, { withCredentials: true }).subscribe({
+      next: () => {
+        localStorage.removeItem('filters');
+        this.likesService.ClearLikeIds();
+        this.currentUser.set(null);
+        this.presenceService.StopConnection();
+      },
+    });
   }
 
   public RefreshToken() {

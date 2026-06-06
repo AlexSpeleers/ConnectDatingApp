@@ -51,8 +51,6 @@ public class MessageRepository(AppDbContext context) : IMessageRepository
             .ToListAsync();
     }
 
-    public async Task<bool> SaveAllAsync() => await context.SaveChangesAsync() > 0;
-
     public void AddGroup(Group group) => context.Groups.Add(group);
 
     public async Task RemoveConnection(string connectionId) =>

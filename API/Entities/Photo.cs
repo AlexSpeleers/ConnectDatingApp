@@ -10,4 +10,5 @@ public class Photo
     [JsonIgnore]
     public Member Member { get; set; } = null!;
     public string MemberId { get; set; } = null!;
+    public bool IsApproved { get; set; } = false;
 }

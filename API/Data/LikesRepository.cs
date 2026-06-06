@@ -7,9 +7,9 @@ namespace API.Data;
 
 public class LikesRepository(AppDbContext context) : ILikesRepository
 {
-    public async void AddLike(MemberLike like) => await context.Likes.AddAsync(like);
+    public void AddLike(MemberLike like) => context.Likes.Add(like);
 
-    public void DeletLike(MemberLike like) => context.Likes.Remove(like);
+    public void DeleteLike(MemberLike like) => context.Likes.Remove(like);
 
     public async Task<IReadOnlyList<string>> GetCurrentMemberLikeIds(string memberId)
     {
@@ -48,6 +48,4 @@ public class LikesRepository(AppDbContext context) : ILikesRepository
         }
         return await PaginationHelper.CreateAsync(result, likesParams.PageNumber, likesParams.PageSize);
     }
-
-    public async Task<bool> SaveAllChanges() => await context.SaveChangesAsync() > 0;
 }

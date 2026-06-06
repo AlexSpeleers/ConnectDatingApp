@@ -48,6 +48,7 @@ public class Seed
             {
                 Url = seedMember.ImageUrl!,
                 MemberId = seedMember.Id,
+                IsApproved = true
             });
 
             var result = await userManager.CreateAsync(user, "Pa$$w0rd");

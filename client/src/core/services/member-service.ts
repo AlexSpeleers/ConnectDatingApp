@@ -53,7 +53,7 @@ export class MemberService {
     return this.http.put(this.baseUrl + 'members/set-main-photo/' + photo.id, {});
   }
 
-  public DeletePhoto(photoId: number) {
-    return this.http.delete(this.baseUrl + 'members/delete-photo' + photoId);
+  public DeletePhoto(id: number) {
+    return this.http.delete(this.baseUrl + 'members/delete-photo/' + id);
   }
 }
