@@ -60,7 +60,8 @@ public class MembersController(IUnitOfWork uow, IPhotoService photoService) : Ba
         {
             Url = uploadResult.SecureUrl.AbsoluteUri,
             PublicId = uploadResult.PublicId,
-            MemberId = User.GetMemberId()
+            MemberId = User.GetMemberId(),
+            IsApproved = true
         };
         member.Photos.Add(photo);
         if (!await uow.CompleteAsync()) return BadRequest("Failed to add photo.");
